@@ -1,5 +1,7 @@
-# Token Buddy
+## Deployment
+  [View Live Demo on Vercel](https://token-buddy-sigma.vercel.app/)
 
+---
 ## Tokenization Algorithm
 
 This project uses a custom algorithm to convert strings into tokens and back.  
@@ -55,4 +57,3 @@ Result: `Hi`
 - **stringToToken(string):** Converts a string to its tokenized form.
 - **tokenToString(token):** Decodes a token back to the original string.
 
-See
