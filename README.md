@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Token Buddy
 
-## Getting Started
+## Tokenization Algorithm
 
-First, run the development server:
+This project uses a custom algorithm to convert strings into tokens and back.  
+The process is as follows:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### String to Token
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Split Input:**  
+   The input string is split into words by spaces.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Character Encoding:**  
+   For each character in a word:
+   - Get its ASCII code.
+   - Add 64 to the ASCII code (ensures every character code is of three digits when converted to octal).
+   - Convert the result to an octal (base-8) string.
+   - Concatenate these octal strings for the word.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Token Output:**  
+   Each word is represented by its concatenated octal codes.  
+   Words are joined by spaces to form the final token string.
 
-## Learn More
+**Example:**  
+`Hi` →  
+- 'H': ASCII 72 → 72+64=136 → octal '210'  
+- 'i': ASCII 105 → 105+64=169 → octal '251'  
+Token: `210251`
 
-To learn more about Next.js, take a look at the following resources:
+### Token to String
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Split Token:**  
+   The token string is split into words by spaces.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Character Decoding:**  
+   For each word:
+   - Split into chunks of 3 characters (each representing an octal code).
+   - Convert each chunk from octal to decimal.
+   - Subtract 64 to get the original ASCII code.
+   - Convert to the corresponding character.
 
-## Deploy on Vercel
+3. **String Output:**  
+   Decoded words are joined by spaces to reconstruct the original string.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Example:**  
+Token `210251` →  
+- '210': octal 210 → decimal 136 → 136-64=72 → 'H'  
+- '251': octal 251 → decimal 169 → 169-64=105 → 'i'  
+Result: `Hi`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Usage
+
+- **stringToToken(string):** Converts a string to its tokenized form.
+- **tokenToString(token):** Decodes a token back to the original string.
+
+See

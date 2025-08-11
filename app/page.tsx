@@ -1,103 +1,104 @@
-import Image from "next/image";
+"use client";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { stringToToken, tokenToString } from "@/lib/tokenizer";
+import { toast } from "sonner";
+import { Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [value, setValue] = useState("");
+  const [output, setOutput] = useState("")
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const [token, setToken] = useState("");
+  const [decoded, setDecoded] = useState("");
+  useEffect(() => {
+    if (value.trim() === "") {
+      setOutput("");
+      return;
+    }
+    const token = stringToToken(value);
+    setOutput(token);
+  }, [value]);
+
+  useEffect(() => {
+    if(token.trim() === "") {
+      setDecoded("");
+      return;
+    }
+    const string = tokenToString(token);
+    setDecoded(string);
+  }, [token]);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+     toast.success("Copied to clipboard!");
+    }).catch(err => {
+      console.error("Failed to copy: ", err);
+      toast.error("Failed to copy to clipboard.");
+    });
+  };
+
+  
+  return (
+    <div className="w-11/12 mx-auto min-h-screen flex flex-col my-20">
+      <h1 className="font-bold text-center mb-6 text-2xl f">
+        String to Token
+      </h1>
+      <div className="flex flex-col md:flex-row gap-4 w-full mb-20">
+        <Card className="w-full min-h-[10rem]">
+          <CardHeader>
+            <CardTitle>Input</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea
+              id="input"
+              className="w-full h-full font-mono resize-none shadow-none"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Type something..."
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          </CardContent>
+        </Card>
+        <Card className="w-full relative min-h-[10rem]">
+          <CardHeader>
+            <CardTitle>Output</CardTitle>
+            <Button className=" absolute top-2 right-2" variant="ghost" onClick={() => copyToClipboard(output)}>
+            <Copy className=""/>
+            </Button>
+
+          </CardHeader>
+          <CardContent>{output}</CardContent>
+        </Card>
+      </div>
+      <h2 className="font-bold text-center mb-4 text-2xl">Token to String</h2>
+      <div className="flex flex-col md:flex-row gap-4 w-full">
+        <Card className="w-full min-h-[10rem]">
+          <CardHeader>
+            <CardTitle>Input</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea
+              id="input"
+              className="w-full h-full resize-none shadow-none"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="Paste your token..."
+            />
+          </CardContent>
+        </Card>
+        <Card className="w-full relative min-h-[10rem]">
+          <CardHeader>
+            <CardTitle>Output</CardTitle>
+            <Button className=" absolute top-2 right-2" variant="ghost" onClick={() => copyToClipboard(decoded)}>
+            <Copy className=""/>
+            </Button>
+          </CardHeader>
+          <CardContent className="font-mono">{decoded}</CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
