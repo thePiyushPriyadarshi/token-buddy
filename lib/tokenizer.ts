@@ -1,6 +1,3 @@
-
-
-let input = "Hi there! How are you doing today?";
 function intToOct(num: number): string {
   return num.toString(8);
 }
